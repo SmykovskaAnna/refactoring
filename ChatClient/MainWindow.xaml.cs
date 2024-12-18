@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -25,9 +26,12 @@ namespace ChatClient
         bool isConnected = false;
         ServiceChatClient client;
         int ID;
+        public ObservableCollection<User> OnlineUsers { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+            OnlineUsers = new ObservableCollection<User>();
+            OnlineUsersListBox.ItemsSource = OnlineUsers;
         }
 
         private void Windows_Loaded(object sender, RoutedEventArgs e)
@@ -61,6 +65,13 @@ namespace ChatClient
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            string userName = tbUserName.Text;
+            User newUser = new User { UserName = userName, IsOnline = true };
+
+            OnlineUsers.Add(newUser);
+
+            OnlineUsersListBox.ItemsSource = OnlineUsers.Where(u => u.IsOnline);
+
             if (isConnected)
             {
                 DisconnectUser();
@@ -92,6 +103,11 @@ namespace ChatClient
                     tbMessage.Text = string.Empty;
                 }
             }
+        }
+        public class User
+        {
+            public string UserName { get; set; }
+            public bool IsOnline { get; set; }
         }
     }
 }

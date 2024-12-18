@@ -15,7 +15,15 @@
         <Button x:Name="bConnDicon" Click="Button_Click" Content="Connect" HorizontalAlignment="Left" Height="65" Margin="223,37,0,0" VerticalAlignment="Top" Width="202" Grid.Column="1"/>
         <ListBox x:Name="lbChat" HorizontalAlignment="Left" Height="279" Margin="167,131,0,0" VerticalAlignment="Top" Width="391" d:ItemsSource="{d:SampleData ItemCount=5}" Grid.Column="1"/>
         <TextBox x:Name="tbMessage"  HorizontalAlignment="Left" Height="97" Margin="54,120,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="256" KeyDown="tbMessage_KeyDown" Grid.ColumnSpan="2"/>
-
+        
+        <ListBox Name="OnlineUsersListBox" Width="224" Height="80" Margin="10,270,0,0" 
+         VerticalAlignment="Top" HorizontalAlignment="Left" Grid.ColumnSpan="2">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding UserName}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
     </Grid>
 </Window>
