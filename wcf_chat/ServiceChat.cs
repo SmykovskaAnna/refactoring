@@ -40,20 +40,27 @@ namespace wcf_chat
             }
         }
 
+        private void BroadcastMessage(string message, int senderId)
+        {
+            string timestamp = DateTime.Now.ToShortTimeString();
+            string formattedMessage = $"{timestamp} {message}";
+
+            foreach (var user in users)
+            {
+                user.operationContext.GetCallbackChannel<IServerChatCallback>().MsgCallback(formattedMessage);
+            }
+        }
+
         public void SendMsg(string msg, int id)
         {
-            foreach (var item in users)
+            var user = users.FirstOrDefault(i => i.ID == id);
+            string answer = DateTime.Now.ToShortTimeString();
+            if (user != null)
             {
-                string answer = DateTime.Now.ToShortTimeString();
-
-                var user = users.FirstOrDefault(i => i.ID == id);
-                if (user != null)
-                {
-                    answer += ": " + user.Name + " ";
-                }
-                answer += msg;
-                item.operationContext.GetCallbackChannel<IServerChatCallback>().MsgCallback(answer);
+                answer += ": " + user.Name + " ";
             }
+            answer += msg;
+            BroadcastMessage(answer, id);
         }
     }
 }
