@@ -46,8 +46,24 @@ namespace wcf_chat
             }
         }
 
+        private void BroadcastMessage(string message, int senderId)
+        {
+            string timestamp = DateTime.Now.ToShortTimeString();
+            string formattedMessage = $"{timestamp} {message}";
+
+            foreach (var user in users)
+            {
+                user.operationContext.GetCallbackChannel<IServerChatCallback>().MsgCallback(formattedMessage);
+            }
+        }
+
         public void SendMsg(string msg, int id)
         {
+            var user = users.FirstOrDefault(i => i.ID == id);
+            string answer = DateTime.Now.ToShortTimeString();
+            if (user != null)
+            {
+                answer += ": " + user.Name + " ";
             lock (usersLock)
             {
                 foreach (var item in users)
@@ -63,6 +79,8 @@ namespace wcf_chat
                     item.operationContext.GetCallbackChannel<IServerChatCallback>().MsgCallback(answer);
                 }
             }
+            answer += msg;
+            BroadcastMessage(answer, id);
         }
     }
 }
