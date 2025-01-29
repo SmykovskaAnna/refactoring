@@ -16,8 +16,23 @@ namespace wcf_chat
         private int nextId = 1;
         private readonly object usersLock = new object();
 
+        public static class Messages
+        {
+            public const string UserConnected = "{0} підключився до чату!";
+            public const string UserDisconnected = "{0} покинув чат!";
+        }
+
         public int Connect(string name)
         {
+            ServerUser user = new ServerUser() {
+                ID = nextId,
+                Name = name,
+                operationContext = OperationContext.Current
+            };
+            nextId++;
+            SendMsg(string.Format(Messages.UserConnected, user.Name), 0);
+            users.Add(user);  
+            return user.ID;
             lock (usersLock)
             {
                 ServerUser user = new ServerUser() {
@@ -37,6 +52,8 @@ namespace wcf_chat
         {
             lock (usersLock)
             {
+                users.Remove(user);
+                SendMsg(string.Format(Messages.UserDisconnected, user.Name), 0);
                 var user = users.FirstOrDefault(i => i.ID == id);
                 if (user!=null)
                 {
